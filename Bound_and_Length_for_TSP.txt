@@ -1,0 +1,71 @@
+private int bound(Node u) {
+        int result = 0;
+        ArrayList<Integer> minimums = new ArrayList<>(n); // store all the minimums: first the current path, then the minimum edges of every other vertex not in the path
+              
+        // get the weights of the previous nodes up to the current one in the path (the length)// and add that to the list of minimums
+        if (u.path.size() > 1)
+            minimums.add(length(u));
+        
+        boolean visited[] = new boolean[n];
+        for (boolean b: visited)
+            b = false;
+        
+        for (int i = 1; i < u.path.size(); i++) { // set the verticies in path (except first verctex) to visited
+            visited[u.path.get(i)-1] = true;
+        }
+        
+        //System.out.println("");
+        for (int i = 0; i < n; i++) { // find the minimum edges of every vertex (except for length 0) that is not in the path with the excpeption of the last vertex in the path
+          //  System.out.print("v" + (i+1) + ": minimum(");
+            boolean newMinFound = false;
+            int min = Integer.MAX_VALUE;
+          
+            if (u.path.contains(i+1) && (i+1 != u.path.get(u.path.size()-1))) // found a visited vertex excluding the last one, do nothing
+                ; // do nothing
+            else { 
+                for (int j = 0; j < n; j++) { // find the min edge of the vertex excluding and edge to an already visited vertex
+                    if (visited[i] && j == 0) // at the last vertex in path with an edge to the first vertex, ignore this edge
+                        ;
+                    else if (visited[j]) // at a nonvisited vertex with an edge to a visited vertex, ignore this edge
+                        ;//if do nothing    
+                    else if (W[i][j] != 0) { // found a valid edge that doesn't == 0
+                        //System.out.print(W[i][j] + " ");
+                        if (min > W[i][j]) { // make this edge the min edge of the vertex if it is less than min
+                            min = W[i][j];
+                            newMinFound = true;
+                        }
+                    }
+                    
+                }
+            }
+            
+            if (newMinFound) { // add the new found min to the list of minimums
+            //    System.out.println(") = "+ min);
+                minimums.add(min);
+            }
+            //else 
+              //  System.out.println(") = ");
+        }
+        
+        //System.out.println("Bound minimums: ");
+        // add all the minimums to create the bound
+        for (int i = 0; i < minimums.size(); i++) { // sum all the minimums in the list to caclulate the bound
+            //System.out.println(minimums.get(i));
+            result += minimums.get(i);
+        }
+               
+        return result;
+    }
+    
+    private int length(Node u) {
+        int result = 0;
+        if (u.path.size() < 2) // if less then 2 verticies in the path, the length is zero
+            return 0;
+        for (int i = 0; i < u.path.size()-1; i++) { // search the path array (but will top before reaching last index)
+            int temp = W[u.path.get(i)-1][u.path.get(i+1)-1]; // find the weight of the edge in the path
+            if (temp > 0) // add to sum (result) if temp > 0 // add it to the sum (the length) if it is greater than zero
+                result += temp;
+        }
+             
+        return result;
+    }
